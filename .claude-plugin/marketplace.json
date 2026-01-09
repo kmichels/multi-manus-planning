@@ -1,0 +1,15 @@
+{
+  "name": "multi-manus-planning",
+  "owner": {
+    "name": "kmichels",
+    "url": "https://github.com/kmichels"
+  },
+  "plugins": [
+    {
+      "name": "multi-manus-planning",
+      "source": "./",
+      "description": "Multi-project Manus-style planning with coordinator pattern. Supports project switching, separate planning/source paths, and cross-machine sync via git.",
+      "version": "1.0.0"
+    }
+  ]
+}
