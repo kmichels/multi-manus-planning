@@ -2,6 +2,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.1.0] - 2026-01-09
+
+### Fixed
+
+- `check-complete.sh` now exits 0 (skip) when no `task_plan.md` exists, instead of exit 1 (error)
+  - Prevents stop hook errors in sessions that don't use planning
+
+### Changed
+
+- **Installation instructions** - Corrected to use `claude plugin` CLI commands instead of incorrect `/plugin` slash commands
+- **Removed "synced config" section** - iCloud/Dropbox sync of `~/.claude` is no longer recommended; per-machine installation is now the standard
+- Added clear "What gets installed" section clarifying that only the skill is installed (no automatic hooks)
+
+### Added
+
+- Development workflow documentation in `CLAUDE.md`
+  - Clear guidance on where to edit (dev repo vs installed plugin)
+  - Testing checklist
+  - Multi-machine update instructions
+
+---
+
 ## [1.0.0] - 2026-01-09
 
 Initial release of multi-manus-planning, forked from planning-with-files v2.0.0.

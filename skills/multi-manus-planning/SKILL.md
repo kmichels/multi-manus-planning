@@ -1,6 +1,6 @@
 ---
 name: multi-manus-planning
-version: "1.0.0"
+version: "1.1.0"
 description: Multi-project Manus-style planning with coordinator pattern. Supports project switching, separate planning/source paths, and cross-machine sync via git. Creates task_plan.md, findings.md, and progress.md.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch
 hooks:

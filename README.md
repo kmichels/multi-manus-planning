@@ -6,7 +6,7 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-green)](https://code.claude.com/docs/en/skills)
-[![Version](https://img.shields.io/badge/version-1.0.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
+[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
 
 ## What's Different?
 
