@@ -55,32 +55,34 @@ default_path: ~/Planning
 
 ## Installation
 
-### From Marketplace (Recommended)
+### Prerequisites
 
-```
-/plugin marketplace add kmichels/multi-manus-planning
-/plugin install multi-manus-planning@multi-manus-planning
-```
+- Claude Code CLI installed
+- Git configured with GitHub access
 
-### Via Synced Config (Multi-Machine)
+### Per-Machine Installation (Required)
 
-If your `~/.claude` folder syncs across machines (via iCloud, Dropbox, or git):
-
-1. Install once on any machine using marketplace or manual method
-2. The skill syncs automatically to all machines
-3. No additional installation needed on other machines
-
-This is ideal for cross-machine workflows where you want the same planning context everywhere.
-
-### Manual Installation
+Install on **each machine** where you want to use multi-manus planning:
 
 ```bash
-# Clone and copy to skills folder
-git clone https://github.com/kmichels/multi-manus-planning.git
-cp -r multi-manus-planning/skills/multi-manus-planning ~/.claude/skills/
+# Step 1: Add the marketplace
+claude plugin marketplace add kmichels/multi-manus-planning
+
+# Step 2: Install the plugin
+claude plugin install multi-manus-planning@multi-manus-planning
+
+# Step 3: Restart your Claude session
+# Exit and start a new session for the plugin to load
 ```
 
-### Cross-Machine Sync (Optional)
+**What gets installed:**
+- ✅ The `/multi-manus-planning` skill (invoke manually)
+- ❌ NO automatic hooks
+- ❌ NO SessionStart configuration
+
+**Multi-machine setup:** Repeat steps 1-3 on each machine. The plugin installs locally and does not sync between machines.
+
+### Optional: SessionStart Hook (Separate Setup)
 
 To automatically sync planning files when starting a session:
 
