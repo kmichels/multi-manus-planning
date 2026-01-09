@@ -1,3 +1,51 @@
+# Multi-Manus Planning Development
+
+## Repository Structure
+
+This is the **development repository** for the multi-manus-planning Claude Code plugin.
+
+**Work here:**
+```
+~/scripts/projects/multi-manus-planning/  # Development repo (git, edit, commit, push)
+```
+
+**Do NOT edit here:**
+```
+~/.claude/plugins/marketplaces/multi-manus-planning/  # Installed plugin (managed by Claude Code)
+```
+
+## Development Workflow
+
+1. **Make changes** in this directory (`~/scripts/projects/multi-manus-planning/`)
+2. **Test locally** by copying to skills folder (optional):
+   ```bash
+   cp -r skills/multi-manus-planning ~/.claude/skills/
+   ```
+3. **Commit and push** to GitHub:
+   ```bash
+   git add .
+   git commit -m "Description of changes"
+   git push origin master
+   ```
+4. **Update installed plugin** on all machines:
+   ```bash
+   claude plugin marketplace update multi-manus-planning
+   claude plugin update multi-manus-planning@multi-manus-planning
+   ```
+
+## Testing
+
+Before pushing changes:
+- Run hook tests: `./skills/multi-manus-planning/scripts/test-hook.sh`
+- Test skill invocation: Start Claude session and run `/multi-manus-planning`
+- Verify backward compatibility (no index.md should still work)
+
+## Multi-Machine Setup
+
+After pushing changes, update the plugin on each machine:
+- Mac Mini: `claude plugin update multi-manus-planning@multi-manus-planning`
+- MacBook Pro: `claude plugin update multi-manus-planning@multi-manus-planning`
+
 <claude-mem-context>
 # Recent Activity
 
