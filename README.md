@@ -86,7 +86,7 @@ cp ~/.claude/plugins/cache/multi-manus-planning/multi-manus-planning/*/commands/
 
 **Note:** Plugins provide *skills* (invoked via Skill tool), not *commands* (invoked via `/slash`). Step 3 copies the command wrapper so you can use `/multi-manus-planning`.
 
-**Multi-machine setup:** Repeat steps 1-3 on each machine. The plugin installs locally and does not sync between machines.
+**Multi-machine setup:** Repeat steps 1-4 on each machine. The plugin installs locally and does not sync between machines.
 
 ### Optional: SessionStart Hook (Separate Setup)
 
