@@ -6,7 +6,7 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-green)](https://code.claude.com/docs/en/skills)
-[![Version](https://img.shields.io/badge/version-1.1.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
+[![Version](https://img.shields.io/badge/version-1.2.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
 
 ## What's Different?
 
@@ -71,14 +71,20 @@ claude plugin marketplace add kmichels/multi-manus-planning
 # Step 2: Install the plugin
 claude plugin install multi-manus-planning@multi-manus-planning
 
-# Step 3: Restart your Claude session
+# Step 3: Copy the command file (enables /multi-manus-planning slash command)
+cp ~/.claude/plugins/cache/multi-manus-planning/multi-manus-planning/*/commands/multi-manus-planning.md ~/.claude/commands/
+
+# Step 4: Restart your Claude session
 # Exit and start a new session for the plugin to load
 ```
 
 **What gets installed:**
-- ✅ The `/multi-manus-planning` skill (invoke manually)
+- ✅ The `multi-manus-planning` skill (available via Skill tool)
+- ✅ The `/multi-manus-planning` command (after Step 3)
 - ❌ NO automatic hooks
 - ❌ NO SessionStart configuration
+
+**Note:** Plugins provide *skills* (invoked via Skill tool), not *commands* (invoked via `/slash`). Step 3 copies the command wrapper so you can use `/multi-manus-planning`.
 
 **Multi-machine setup:** Repeat steps 1-3 on each machine. The plugin installs locally and does not sync between machines.
 

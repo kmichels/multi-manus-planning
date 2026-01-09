@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 2026-01-09
+
+### Added
+
+- **Command wrapper** (`commands/multi-manus-planning.md`) - Enables `/multi-manus-planning` slash command
+  - Plugins provide skills (Skill tool), not commands (slash)
+  - Users must copy command file to `~/.claude/commands/` for slash command to work
+- Updated installation instructions with Step 3 for command file copy
+- Clarified difference between skills and commands in README
+
+---
+
 ## [1.1.0] - 2026-01-09
 
 ### Fixed
