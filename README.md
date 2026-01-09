@@ -62,6 +62,16 @@ default_path: ~/Planning
 /plugin install multi-manus-planning@multi-manus-planning
 ```
 
+### Via Synced Config (Multi-Machine)
+
+If your `~/.claude` folder syncs across machines (via iCloud, Dropbox, or git):
+
+1. Install once on any machine using marketplace or manual method
+2. The skill syncs automatically to all machines
+3. No additional installation needed on other machines
+
+This is ideal for cross-machine workflows where you want the same planning context everywhere.
+
 ### Manual Installation
 
 ```bash
