@@ -18,10 +18,5 @@
     "task-management",
     "coordinator",
     "git-sync"
-  ],
-  "basedOn": {
-    "name": "planning-with-files",
-    "author": "OthmanAdi",
-    "url": "https://github.com/OthmanAdi/planning-with-files"
-  }
+  ]
 }
