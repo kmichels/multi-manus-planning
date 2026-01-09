@@ -1,0 +1,27 @@
+{
+  "name": "multi-manus-planning",
+  "version": "1.0.0",
+  "description": "Multi-project Manus-style planning with coordinator pattern. Supports project switching, separate planning/source paths, and cross-machine sync via git.",
+  "author": {
+    "name": "kmichels",
+    "url": "https://github.com/kmichels"
+  },
+  "repository": "https://github.com/kmichels/multi-manus-planning",
+  "license": "MIT",
+  "keywords": [
+    "planning",
+    "manus",
+    "multi-project",
+    "workflow",
+    "markdown",
+    "context-engineering",
+    "task-management",
+    "coordinator",
+    "git-sync"
+  ],
+  "basedOn": {
+    "name": "planning-with-files",
+    "author": "OthmanAdi",
+    "url": "https://github.com/OthmanAdi/planning-with-files"
+  }
+}
