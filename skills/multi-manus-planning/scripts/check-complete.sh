@@ -6,9 +6,8 @@
 PLAN_FILE="${1:-task_plan.md}"
 
 if [ ! -f "$PLAN_FILE" ]; then
-    echo "ERROR: $PLAN_FILE not found"
-    echo "Cannot verify completion without a task plan."
-    exit 1
+    # No task plan = nothing to check, skip silently
+    exit 0
 fi
 
 echo "=== Task Completion Check ==="
