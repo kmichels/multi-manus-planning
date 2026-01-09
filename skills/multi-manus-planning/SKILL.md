@@ -9,10 +9,6 @@ hooks:
       hooks:
         - type: command
           command: "cat task_plan.md 2>/dev/null | head -30 || true"
-  Stop:
-    - hooks:
-        - type: command
-          command: "${CLAUDE_PLUGIN_ROOT}/scripts/check-complete.sh"
 ---
 
 # Planning with Files
