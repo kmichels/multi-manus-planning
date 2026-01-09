@@ -14,11 +14,12 @@ fi
 echo "=== Task Completion Check ==="
 echo ""
 
-# Count phases by status (using -F for fixed string matching)
+# Count phases by status
+# Matches format: ### Phase N: Name `status`
 TOTAL=$(grep -c "### Phase" "$PLAN_FILE" || true)
-COMPLETE=$(grep -cF "**Status:** complete" "$PLAN_FILE" || true)
-IN_PROGRESS=$(grep -cF "**Status:** in_progress" "$PLAN_FILE" || true)
-PENDING=$(grep -cF "**Status:** pending" "$PLAN_FILE" || true)
+COMPLETE=$(grep -cE "### Phase.*\`complete\`" "$PLAN_FILE" || true)
+IN_PROGRESS=$(grep -cE "### Phase.*\`in_progress\`" "$PLAN_FILE" || true)
+PENDING=$(grep -cE "### Phase.*\`pending\`" "$PLAN_FILE" || true)
 
 # Default to 0 if empty
 : "${TOTAL:=0}"

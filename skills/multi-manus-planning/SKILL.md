@@ -9,6 +9,10 @@ hooks:
       hooks:
         - type: command
           command: "cat task_plan.md 2>/dev/null | head -30 || true"
+  Stop:
+    - hooks:
+        - type: command
+          command: "~/.claude/hooks/check-complete.sh"
 ---
 
 # Planning with Files
@@ -326,6 +330,24 @@ To automatically sync planning files when starting a session on a different mach
    - Stashes local changes before pulling, restores after
    - Displays the active project: "Planning context: [project-name]"
    - Warns if conflicts occur (you'll need to resolve manually)
+
+## Task Completion Check Setup
+
+The skill includes a Stop hook that warns you if you try to end a session with incomplete phases. To enable it:
+
+1. **Copy the script** to your Claude Code hooks folder:
+
+   ```bash
+   cp scripts/check-complete.sh ~/.claude/hooks/
+   chmod +x ~/.claude/hooks/check-complete.sh
+   ```
+
+2. **How it works**:
+   - On session stop, the hook checks `task_plan.md` for phase status
+   - Counts phases marked with `` `complete` ``, `` `in_progress` ``, or `` `pending` ``
+   - Exits with error if not all phases are complete (non-blocking warning)
+
+**Note:** The hook uses `~/.claude/hooks/check-complete.sh` instead of a relative path because `${CLAUDE_PLUGIN_ROOT}` doesn't resolve for standalone skill installations.
 
 ## Advanced Topics
 
