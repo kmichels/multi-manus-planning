@@ -6,18 +6,18 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-green)](https://code.claude.com/docs/en/skills)
-[![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
+[![Version](https://img.shields.io/badge/version-1.4.1-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
 
 ## What's Different?
 
-| Feature           | planning-with-files | multi-manus-planning                |
-| ----------------- | ------------------- | ----------------------------------- |
-| Projects          | Single (CWD)        | Multiple via coordinator            |
-| Planning location | CWD only            | Configurable (e.g., Obsidian vault) |
-| Source path       | Same as planning    | Separate (code can live elsewhere)  |
-| Cross-machine     | Manual              | SessionStart hook with git sync     |
-| Project switching | N/A                 | Natural language ("switch to X")    |
-| Session isolation | N/A                 | TTY-scoped (v1.4.0) - no conflicts  |
+| Feature           | planning-with-files | multi-manus-planning                   |
+| ----------------- | ------------------- | -------------------------------------- |
+| Projects          | Single (CWD)        | Multiple via coordinator               |
+| Planning location | CWD only            | Configurable (e.g., Obsidian vault)    |
+| Source path       | Same as planning    | Separate (code can live elsewhere)     |
+| Cross-machine     | Manual              | SessionStart hook with git sync        |
+| Project switching | N/A                 | Natural language ("switch to X")       |
+| Session isolation | N/A                 | Session-scoped (v1.4.1) - no conflicts |
 
 ## The Coordinator Pattern
 
@@ -121,7 +121,7 @@ To automatically sync planning files when starting a session:
    }
    ```
 
-### Optional: SessionEnd Hook (Session Cleanup, v1.4.0)
+### Optional: SessionEnd Hook (Session Cleanup)
 
 To automatically clean up session-local override files when ending a session:
 
@@ -150,7 +150,7 @@ To automatically clean up session-local override files when ending a session:
    }
    ```
 
-**Note:** This hook removes `.active.override.$TTY_ID` files created by "switch to" commands. Without it, stale files are harmlessly overwritten by the next session in that terminal.
+**Note:** This hook removes `.active.override.$SESSION_ID` files created by "switch to" commands. Without it, stale files accumulate but are harmless.
 
 ## Usage
 
@@ -198,20 +198,23 @@ Claude: Switched to project-b (this session)
         [Reads task_plan.md and shows current status]
 ```
 
-### Session Isolation (v1.4.0)
+### Session Isolation (v1.4.1)
 
-Multiple Claude Code terminals can work on different projects in the same workspace without conflicts:
+Multiple Claude Code sessions can work on different projects in the same workspace without conflicts:
 
-- **"switch to X"** writes to a session-local override file (`.active.override.$TTY_ID`)
-- **Other terminals** are unaffected by your project switches
+- **"switch to X"** writes to a session-local override file (`.active.override.$CLAUDE_CODE_SESSION_ID`)
+- **Other sessions** are unaffected by your project switches
 - **SessionEnd hook** cleans up the override file automatically
 - **"set default X"** updates `index.md` (the workspace default for new sessions)
 
 **Priority cascade when reading active project:**
 
 1. `$MANUS_PROJECT` environment variable (explicit override)
-2. `.active.override.$TTY_ID` (session-local state)
+2. `.active.override.$CLAUDE_CODE_SESSION_ID` (session-local state)
 3. `active:` in `index.md` (workspace default)
+
+**Note:** v1.4.0 used TTY detection which doesn't work in Claude Code (Bash tool runs without TTY).
+v1.4.1 uses `$CLAUDE_CODE_SESSION_ID` which is available in all Claude Code contexts.
 
 **Recommended .gitignore addition:**
 

@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.1] - 2026-01-11
+
+### Fixed
+
+- **Session isolation now works in Claude Code** - TTY detection doesn't work because Claude Code's Bash tool runs without a TTY attached. Now uses `$CLAUDE_CODE_SESSION_ID` environment variable instead, which is available in all Claude Code execution contexts.
+
+### Changed
+
+- Override files now use session ID: `.active.override.$CLAUDE_CODE_SESSION_ID` (was `$TTY_ID`)
+- Updated all documentation to reflect the change from TTY to session ID
+- Priority cascade unchanged, just uses different identifier source
+
+---
+
 ## [1.4.0] - 2026-01-11
 
 ### Added

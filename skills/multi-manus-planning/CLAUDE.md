@@ -7,6 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1321 | 7:38 AM | 🔴 | Fixed session isolation to use CLAUDE_CODE_SESSION_ID instead of TTY detection | ~402 |
+| #1320 | " | 🔴 | Fixed session override file to use CLAUDE_CODE_SESSION_ID instead of TTY_ID | ~348 |
+| #1318 | " | ✅ | Bumped multi-manus-planning skill version to 1.4.1 | ~217 |
 | #1286 | 7:04 AM | 🟣 | Added session-aware project switching to multi-manus-planning v1.4.0 | ~425 |
 | #1285 | " | ✅ | Bumped multi-manus-planning skill version from 1.2.0 to 1.4.0 | ~262 |
 </claude-mem-context>

@@ -7,6 +7,9 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1317 | 7:38 AM | 🔴 | Fixed session isolation to use CLAUDE_CODE_SESSION_ID instead of TTY detection | ~415 |
+| #1316 | " | 🔴 | Replaced TTY detection with CLAUDE_CODE_SESSION_ID for session cleanup | ~373 |
+| #1315 | " | 🟣 | Implemented SessionEnd cleanup hook for TTY-scoped override files | ~357 |
 | #1284 | 7:04 AM | 🟣 | Implemented session-aware project context with TTY-based overrides | ~407 |
 | #1270 | 6:41 AM | 🟣 | Added terminal visibility for SessionStart hook planning context | ~367 |
 | #1266 | 6:15 AM | 🔴 | Fixed SessionStart hook to find .planning directory in parent directories | ~409 |

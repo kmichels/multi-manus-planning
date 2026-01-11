@@ -61,16 +61,14 @@ if [[ -d "$PLANNING_ROOT/.git" ]] && git -C "$PLANNING_ROOT" remote get-url orig
 	fi
 fi
 
-# TTY detection for session-specific overrides (v1.4.0)
-get_tty_id() {
-	tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_'
-}
-
-TTY_ID=$(get_tty_id)
+# Session ID for session-specific overrides (v1.4.1)
+# Use CLAUDE_CODE_SESSION_ID (available in all Claude Code contexts)
+# TTY detection doesn't work - Bash tool runs without TTY attached
+SESSION_ID="$CLAUDE_CODE_SESSION_ID"
 
 # Read active project with priority cascade:
 # 1. $MANUS_PROJECT environment variable (explicit override)
-# 2. .active.override.$TTY_ID (session-local state)
+# 2. .active.override.$SESSION_ID (session-local state)
 # 3. index.md active: field (workspace default)
 active=""
 active_source=""
@@ -78,8 +76,8 @@ active_source=""
 if [[ -n "$MANUS_PROJECT" ]]; then
 	active="$MANUS_PROJECT"
 	active_source="env"
-elif [[ -n "$TTY_ID" && -f "$PLANNING_DIR/.active.override.$TTY_ID" ]]; then
-	active=$(cat "$PLANNING_DIR/.active.override.$TTY_ID" 2>/dev/null | tr -d '[:space:]')
+elif [[ -n "$SESSION_ID" && -f "$PLANNING_DIR/.active.override.$SESSION_ID" ]]; then
+	active=$(cat "$PLANNING_DIR/.active.override.$SESSION_ID" 2>/dev/null | tr -d '[:space:]')
 	active_source="session"
 elif [[ -f "$INDEX_FILE" ]]; then
 	active=$(grep "^active:" "$INDEX_FILE" 2>/dev/null | cut -d: -f2 | tr -d ' ')

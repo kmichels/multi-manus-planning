@@ -1,6 +1,6 @@
 ---
 name: multi-manus-planning
-version: "1.4.0"
+version: "1.4.1"
 description: Multi-project Manus-style planning with coordinator pattern. Supports project switching, separate planning/source paths, and cross-machine sync via git. Creates task_plan.md, findings.md, and progress.md.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch
 hooks:
@@ -30,7 +30,7 @@ This skill supports multiple project contexts via a coordinator file.
 1. Check if `.planning/index.md` exists (walking up from CWD like git finds `.git`)
 2. If found, determine active project using priority cascade:
    - **Priority 1:** `$MANUS_PROJECT` environment variable (explicit override)
-   - **Priority 2:** `.planning/.active.override.$TTY_ID` (session-local state)
+   - **Priority 2:** `.planning/.active.override.$CLAUDE_CODE_SESSION_ID` (session-local state)
    - **Priority 3:** `active:` field in `index.md` (workspace default)
 3. Look up that project's path in the Projects table
 4. Expand `~` to the user's home directory in paths
@@ -43,12 +43,11 @@ If no `.planning/` found:
 - Use current directory as `{project_path}` (backward compatible)
 - Planning files go directly in CWD
 
-**TTY Detection:**
+**Session ID:**
 
-```bash
-TTY_ID=$(tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_')
-# Example: /dev/ttys001 → ttys001
-```
+Claude Code exposes `$CLAUDE_CODE_SESSION_ID` (a UUID) in all execution contexts.
+Use this for session-local override files. TTY detection doesn't work because
+Claude Code's Bash tool runs without a TTY attached.
 
 ### Planning File Locations
 
@@ -114,10 +113,10 @@ When user requests a project switch with "switch to [name]":
 
 1. Read `.planning/index.md`
 2. Verify the requested project exists in the Projects table
-3. Detect TTY ID: `tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_'`
-4. Write the project name to `.planning/.active.override.$TTY_ID`
+3. Get session ID from `$CLAUDE_CODE_SESSION_ID` environment variable
+4. Write the project name to `.planning/.active.override.$CLAUDE_CODE_SESSION_ID`
    - This is session-local - does NOT modify index.md
-   - Other terminal sessions are unaffected
+   - Other Claude Code sessions are unaffected
 5. Read the new project's `task_plan.md` if it exists
 6. Report: "Switched to [name] (this session). Current task: [summary from task_plan.md or 'No active task']"
 
