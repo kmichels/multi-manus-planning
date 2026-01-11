@@ -7,6 +7,7 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1342 | 7:50 AM | ✅ | Bumped version to 1.4.2 in SKILL.md | ~159 |
 | #1321 | 7:38 AM | 🔴 | Fixed session isolation to use CLAUDE_CODE_SESSION_ID instead of TTY detection | ~402 |
 | #1320 | " | 🔴 | Fixed session override file to use CLAUDE_CODE_SESSION_ID instead of TTY_ID | ~348 |
 | #1318 | " | ✅ | Bumped multi-manus-planning skill version to 1.4.1 | ~217 |

@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.2] - 2026-01-11
+
+### Fixed
+
+- **SessionStart hook now instructs Claude to use the Skill tool** - Skills are "model-invoked" based on request matching, not auto-loaded. The previous hook output mentioned commands but didn't tell Claude to invoke the skill. Now the hook explicitly instructs: "You MUST use the Skill tool with skill='multi-manus-planning' to handle the request."
+
+### Changed
+
+- SessionStart hook output is more explicit about requiring Skill tool invocation
+- Prevents Claude from handling project commands directly without loading skill instructions
+
+---
+
 ## [1.4.1] - 2026-01-11
 
 ### Fixed

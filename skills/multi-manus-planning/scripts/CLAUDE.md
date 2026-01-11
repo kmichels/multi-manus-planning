@@ -7,6 +7,7 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1341 | 7:50 AM | 🔴 | Fixed SessionStart hook to enforce Skill tool invocation for planning commands | ~437 |
 | #1317 | 7:38 AM | 🔴 | Fixed session isolation to use CLAUDE_CODE_SESSION_ID instead of TTY detection | ~415 |
 | #1316 | " | 🔴 | Replaced TTY detection with CLAUDE_CODE_SESSION_ID for session cleanup | ~373 |
 | #1315 | " | 🟣 | Implemented SessionEnd cleanup hook for TTY-scoped override files | ~357 |

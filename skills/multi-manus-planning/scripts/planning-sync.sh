@@ -107,10 +107,11 @@ esac
 if [[ -n "$active" ]]; then
 	output="${output}Planning context: $active"
 
-	# Add skill invocation hint so Claude knows to offer planning commands
-	output="$output\\n\\n**Multi-Manus Planning Active**\\nCommands: 'switch to [name]', 'list projects', 'which project?', 'add project [name]'"
+	# CRITICAL: Instruct Claude to use the Skill tool for project commands
+	# Without this explicit instruction, Claude will handle commands directly without loading skill instructions
+	output="$output\\n\\n**IMPORTANT: Multi-Manus Planning Skill Required**\\nWhen user says 'switch to [name]', 'list projects', 'which project?', or 'add project [name]':\\n→ You MUST use the Skill tool with skill='multi-manus-planning' to handle the request.\\n→ Do NOT modify .planning/index.md directly - the skill handles session-local overrides."
 elif [[ -f "$INDEX_FILE" ]]; then
-	output="${output}No active planning project set. Use 'add project [name]' to create one."
+	output="${output}No active planning project set. Use Skill tool with skill='multi-manus-planning' and ask to 'add project [name]'."
 fi
 
 # Output JSON to stdout (SessionStart hooks use this format - goes to AI context)
