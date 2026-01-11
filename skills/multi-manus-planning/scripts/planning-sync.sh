@@ -5,31 +5,51 @@
 # Read stdin (Claude Code sends JSON input to hooks)
 read -t 1 -d '' INPUT 2>/dev/null || true
 
-PLANNING_DIR=".planning"
-INDEX_FILE="$PLANNING_DIR/index.md"
+# Find .planning directory by walking up from CWD (like git finds .git)
+find_planning_dir() {
+	local dir="$PWD"
+	while [[ "$dir" != "/" ]]; do
+		if [[ -d "$dir/.planning" ]]; then
+			echo "$dir/.planning"
+			return 0
+		fi
+		dir=$(dirname "$dir")
+	done
+	return 1
+}
 
-# Only run if we have planning directory
-if [[ ! -d "$PLANNING_DIR" ]]; then
+PLANNING_DIR=$(find_planning_dir)
+if [[ -z "$PLANNING_DIR" ]]; then
 	exit 0
 fi
 
+INDEX_FILE="$PLANNING_DIR/index.md"
+
+# Only run if we have index file
+if [[ ! -f "$INDEX_FILE" ]]; then
+	exit 0
+fi
+
+# Get the directory containing .planning for git operations
+PLANNING_ROOT=$(dirname "$PLANNING_DIR")
+
 # Try to sync if we're in a git repo with a remote
 pull_result=""
-if [[ -d ".git" ]] && git remote get-url origin &>/dev/null; then
+if [[ -d "$PLANNING_ROOT/.git" ]] && git -C "$PLANNING_ROOT" remote get-url origin &>/dev/null; then
 	# Fetch to see if we're behind (always safe)
-	git fetch origin "$(git branch --show-current)" &>/dev/null
+	git -C "$PLANNING_ROOT" fetch origin "$(git -C "$PLANNING_ROOT" branch --show-current)" &>/dev/null
 
 	# Check if we're behind
-	LOCAL=$(git rev-parse HEAD 2>/dev/null)
-	REMOTE=$(git rev-parse "@{u}" 2>/dev/null)
+	LOCAL=$(git -C "$PLANNING_ROOT" rev-parse HEAD 2>/dev/null)
+	REMOTE=$(git -C "$PLANNING_ROOT" rev-parse "@{u}" 2>/dev/null)
 
 	if [[ "$LOCAL" != "$REMOTE" ]]; then
 		# We're behind - check if working directory is clean enough to pull
-		if git diff --quiet 2>/dev/null; then
+		if git -C "$PLANNING_ROOT" diff --quiet 2>/dev/null; then
 			# Clean - safe to pull
-			if git pull --ff-only origin "$(git branch --show-current)" &>/dev/null; then
+			if git -C "$PLANNING_ROOT" pull --ff-only origin "$(git -C "$PLANNING_ROOT" branch --show-current)" &>/dev/null; then
 				pull_result="synced"
-			elif git pull --no-edit origin "$(git branch --show-current)" &>/dev/null; then
+			elif git -C "$PLANNING_ROOT" pull --no-edit origin "$(git -C "$PLANNING_ROOT" branch --show-current)" &>/dev/null; then
 				pull_result="merged"
 			else
 				pull_result="conflict"
@@ -66,11 +86,14 @@ dirty)
 	;;
 esac
 
-# Report active project
+# Report active project with multi-manus-planning context
 if [[ -n "$active" ]]; then
 	output="${output}Planning context: $active"
+
+	# Add skill invocation hint so Claude knows to offer planning commands
+	output="$output\\n\\n**Multi-Manus Planning Active**\\nCommands: 'switch to [name]', 'list projects', 'which project?', 'add project [name]'"
 elif [[ -f "$INDEX_FILE" ]]; then
-	output="${output}No active planning project set."
+	output="${output}No active planning project set. Use 'add project [name]' to create one."
 fi
 
 # Output JSON to stdout (SessionStart hooks use this format)

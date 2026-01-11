@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0] - 2026-01-11
+
+### Fixed
+
+- **SessionStart hook now walks up directory tree** to find `.planning/`, like how git finds `.git/`
+  - Previously only checked CWD, so hook failed when starting session in a subdirectory
+  - Now works from any subdirectory of a workspace with `.planning/`
+- Git operations in hook now use correct path (the directory containing `.planning/`, not CWD)
+
+### Added
+
+- **Multi-Manus Planning hint** in SessionStart output - reminds users of available commands
+- Active project context now shows in all sessions that have `.planning/` in parent directory
+
+---
+
 ## [1.2.0] - 2026-01-09
 
 ### Added

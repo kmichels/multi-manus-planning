@@ -6,7 +6,7 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-green)](https://code.claude.com/docs/en/skills)
-[![Version](https://img.shields.io/badge/version-1.2.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
+[![Version](https://img.shields.io/badge/version-1.3.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
 
 ## What's Different?
 
@@ -79,18 +79,21 @@ cp ~/.claude/plugins/cache/multi-manus-planning/multi-manus-planning/*/commands/
 ```
 
 **What gets installed:**
+
 - ✅ The `multi-manus-planning` skill (available via Skill tool)
 - ✅ The `/multi-manus-planning` command (after Step 3)
 - ❌ NO automatic hooks
 - ❌ NO SessionStart configuration
 
-**Note:** Plugins provide *skills* (invoked via Skill tool), not *commands* (invoked via `/slash`). Step 3 copies the command wrapper so you can use `/multi-manus-planning`.
+**Note:** Plugins provide _skills_ (invoked via Skill tool), not _commands_ (invoked via `/slash`). Step 3 copies the command wrapper so you can use `/multi-manus-planning`.
 
 **Multi-machine setup:** Repeat steps 1-4 on each machine. The plugin installs locally and does not sync between machines.
 
 ### Optional: SessionStart Hook (Separate Setup)
 
 To automatically sync planning files when starting a session:
+
+**Note:** The hook walks up the directory tree to find `.planning/`, similar to how git finds `.git/`. This means it works from any subdirectory of your workspace.
 
 1. Copy the hook:
 
