@@ -61,10 +61,29 @@ if [[ -d "$PLANNING_ROOT/.git" ]] && git -C "$PLANNING_ROOT" remote get-url orig
 	fi
 fi
 
-# Read active project from index.md
+# TTY detection for session-specific overrides (v1.4.0)
+get_tty_id() {
+	tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_'
+}
+
+TTY_ID=$(get_tty_id)
+
+# Read active project with priority cascade:
+# 1. $MANUS_PROJECT environment variable (explicit override)
+# 2. .active.override.$TTY_ID (session-local state)
+# 3. index.md active: field (workspace default)
 active=""
-if [[ -f "$INDEX_FILE" ]]; then
+active_source=""
+
+if [[ -n "$MANUS_PROJECT" ]]; then
+	active="$MANUS_PROJECT"
+	active_source="env"
+elif [[ -n "$TTY_ID" && -f "$PLANNING_DIR/.active.override.$TTY_ID" ]]; then
+	active=$(cat "$PLANNING_DIR/.active.override.$TTY_ID" 2>/dev/null | tr -d '[:space:]')
+	active_source="session"
+elif [[ -f "$INDEX_FILE" ]]; then
 	active=$(grep "^active:" "$INDEX_FILE" 2>/dev/null | cut -d: -f2 | tr -d ' ')
+	active_source="default"
 fi
 
 # Build output message
@@ -96,10 +115,19 @@ elif [[ -f "$INDEX_FILE" ]]; then
 	output="${output}No active planning project set. Use 'add project [name]' to create one."
 fi
 
-# Output JSON to stdout (SessionStart hooks use this format)
+# Output JSON to stdout (SessionStart hooks use this format - goes to AI context)
 if [[ -n "$output" ]]; then
 	# JSON format for SessionStart hooks
 	echo "{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"$output\"}}"
+
+	# ALSO write to /dev/tty so user sees it in terminal
+	# (SessionStart stdout goes to context, not terminal - known Claude Code behavior)
+	if [[ -w /dev/tty ]]; then
+		# Simple display for terminal (without the markdown)
+		if [[ -n "$active" ]]; then
+			printf "  ⎿  Planning: %s\n" "$active" >/dev/tty 2>/dev/null || true
+		fi
+	fi
 fi
 
 exit 0

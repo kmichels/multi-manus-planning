@@ -2,6 +2,36 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.4.0] - 2026-01-11
+
+### Added
+
+- **Session-aware project isolation** - Multiple terminals can work on different projects without conflicts
+  - Each terminal has a unique TTY ID (e.g., `ttys001`, `ttys002`)
+  - "switch to X" writes to `.planning/.active.override.$TTY_ID` (session-local)
+  - Other terminals are unaffected by project switches
+  - SessionEnd hook (`planning-cleanup.sh`) cleans up override files automatically
+
+- **New "set default [name]" command** - Updates `active:` in `index.md` for new sessions
+  - Separates "current session project" from "workspace default project"
+  - New sessions start with the workspace default unless overridden
+
+- **Priority cascade for active project detection**:
+  1. `$MANUS_PROJECT` environment variable (explicit override)
+  2. `.active.override.$TTY_ID` (session-local state)
+  3. `active:` field in `index.md` (workspace default)
+
+- **New SessionEnd hook** (`planning-cleanup.sh`) - Removes session-local override files
+
+### Changed
+
+- "switch to X" no longer modifies `index.md` - writes to session-local file instead
+- SessionStart hook now checks TTY-scoped override files before `index.md`
+- SKILL.md updated with session isolation documentation
+- README updated with Session Isolation section and SessionEnd hook setup
+
+---
+
 ## [1.3.0] - 2026-01-11
 
 ### Fixed

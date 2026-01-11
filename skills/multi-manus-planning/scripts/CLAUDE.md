@@ -7,6 +7,8 @@
 
 | ID | Time | T | Title | Read |
 |----|------|---|-------|------|
+| #1284 | 7:04 AM | 🟣 | Implemented session-aware project context with TTY-based overrides | ~407 |
+| #1270 | 6:41 AM | 🟣 | Added terminal visibility for SessionStart hook planning context | ~367 |
 | #1266 | 6:15 AM | 🔴 | Fixed SessionStart hook to find .planning directory in parent directories | ~409 |
 | #1261 | 6:13 AM | 🟣 | Updated multi-manus-planning skill hook with git operations from discovered planning root | ~431 |
 </claude-mem-context>

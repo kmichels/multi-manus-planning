@@ -1,6 +1,6 @@
 ---
 name: multi-manus-planning
-version: "1.2.0"
+version: "1.4.0"
 description: Multi-project Manus-style planning with coordinator pattern. Supports project switching, separate planning/source paths, and cross-machine sync via git. Creates task_plan.md, findings.md, and progress.md.
 allowed-tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch
 hooks:
@@ -27,17 +27,28 @@ This skill supports multiple project contexts via a coordinator file.
 
 **FIRST**, check for a coordinator file:
 
-1. Check if `.planning/index.md` exists in the current directory
-2. If found:
-   - Read the `active:` field to get the current project name
-   - Look up that project's path in the Projects table
-   - Expand `~` to the user's home directory in paths
-   - Use that path as `{project_path}` for all planning files
-   - Create the directory if it doesn't exist
-   - Report: "Planning context: [project-name] at [path]"
-3. If not found:
-   - Use current directory as `{project_path}` (backward compatible)
-   - Planning files go directly in CWD
+1. Check if `.planning/index.md` exists (walking up from CWD like git finds `.git`)
+2. If found, determine active project using priority cascade:
+   - **Priority 1:** `$MANUS_PROJECT` environment variable (explicit override)
+   - **Priority 2:** `.planning/.active.override.$TTY_ID` (session-local state)
+   - **Priority 3:** `active:` field in `index.md` (workspace default)
+3. Look up that project's path in the Projects table
+4. Expand `~` to the user's home directory in paths
+5. Use that path as `{project_path}` for all planning files
+6. Create the directory if it doesn't exist
+7. Report: "Planning context: [project-name] at [path]"
+
+If no `.planning/` found:
+
+- Use current directory as `{project_path}` (backward compatible)
+- Planning files go directly in CWD
+
+**TTY Detection:**
+
+```bash
+TTY_ID=$(tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_')
+# Example: /dev/ttys001 → ttys001
+```
 
 ### Planning File Locations
 
@@ -51,15 +62,16 @@ All planning files use `{project_path}`:
 
 Recognize these natural language patterns:
 
-| User Says                            | Action                                                        |
-| ------------------------------------ | ------------------------------------------------------------- |
-| "switch to [name]"                   | Update `active:` in index.md, read new project's task_plan.md |
-| "list projects" / "show projects"    | Display all projects from index.md table                      |
-| "which project?" / "current context" | Show active project name and resolved path                    |
-| "add project [name]"                 | Interactive flow to create new project (see below)            |
-| "set default path [path]"            | Update default_path in index.md                               |
-| "where are planning files?"          | Show resolved `{project_path}`                                |
-| "where is source?"                   | Show source path for current project                          |
+| User Says                            | Action                                                            |
+| ------------------------------------ | ----------------------------------------------------------------- |
+| "switch to [name]"                   | Write to session override file, read new project's task_plan.md   |
+| "set default [name]"                 | Update `active:` in index.md (workspace default for new sessions) |
+| "list projects" / "show projects"    | Display all projects from index.md table                          |
+| "which project?" / "current context" | Show active project name, source, and resolved path               |
+| "add project [name]"                 | Interactive flow to create new project (see below)                |
+| "set default path [path]"            | Update default_path in index.md                                   |
+| "where are planning files?"          | Show resolved `{project_path}`                                    |
+| "where is source?"                   | Show source path for current project                              |
 
 ### Adding a Project
 
@@ -96,17 +108,30 @@ When user says "add project [name]":
    - Files: task_plan.md, findings.md, progress.md
    ```
 
-### Switching Projects
+### Switching Projects (Session-Local)
 
-When user requests a project switch:
+When user requests a project switch with "switch to [name]":
 
 1. Read `.planning/index.md`
 2. Verify the requested project exists in the Projects table
-3. Update the `active:` field to the new project name
-4. Read the new project's `task_plan.md` if it exists
-5. Report: "Switched to [name]. Current task: [summary from task_plan.md or 'No active task']"
+3. Detect TTY ID: `tty 2>/dev/null | sed 's|/dev/||' | tr '/' '_'`
+4. Write the project name to `.planning/.active.override.$TTY_ID`
+   - This is session-local - does NOT modify index.md
+   - Other terminal sessions are unaffected
+5. Read the new project's `task_plan.md` if it exists
+6. Report: "Switched to [name] (this session). Current task: [summary from task_plan.md or 'No active task']"
 
 If the requested project doesn't exist, offer to create it.
+
+### Setting Workspace Default
+
+When user says "set default [name]":
+
+1. Verify the requested project exists in the Projects table
+2. Update the `active:` field in `.planning/index.md`
+3. Report: "Set [name] as workspace default. New sessions will start with this project."
+
+This changes the default project for all new sessions in this workspace.
 
 ### Intent Mismatch Detection
 

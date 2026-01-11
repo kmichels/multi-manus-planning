@@ -6,7 +6,7 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-green)](https://code.claude.com/docs/en/skills)
-[![Version](https://img.shields.io/badge/version-1.3.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
+[![Version](https://img.shields.io/badge/version-1.4.0-brightgreen)](https://github.com/kmichels/multi-manus-planning/releases)
 
 ## What's Different?
 
@@ -17,6 +17,7 @@ A Claude Code skill that extends the [planning-with-files](https://github.com/Ot
 | Source path       | Same as planning    | Separate (code can live elsewhere)  |
 | Cross-machine     | Manual              | SessionStart hook with git sync     |
 | Project switching | N/A                 | Natural language ("switch to X")    |
+| Session isolation | N/A                 | TTY-scoped (v1.4.0) - no conflicts  |
 
 ## The Coordinator Pattern
 
@@ -111,7 +112,7 @@ To automatically sync planning files when starting a session:
            "hooks": [
              {
                "type": "command",
-               "command": "/path/to/hooks/planning-sync.sh"
+               "command": "~/.claude/hooks/planning-sync.sh"
              }
            ]
          }
@@ -120,17 +121,49 @@ To automatically sync planning files when starting a session:
    }
    ```
 
+### Optional: SessionEnd Hook (Session Cleanup, v1.4.0)
+
+To automatically clean up session-local override files when ending a session:
+
+1. Copy the hook:
+
+   ```bash
+   cp ~/.claude/skills/multi-manus-planning/scripts/planning-cleanup.sh ~/.claude/hooks/
+   chmod +x ~/.claude/hooks/planning-cleanup.sh
+   ```
+
+2. Add to `~/.claude/settings.json`:
+   ```json
+   {
+     "hooks": {
+       "SessionEnd": [
+         {
+           "hooks": [
+             {
+               "type": "command",
+               "command": "~/.claude/hooks/planning-cleanup.sh"
+             }
+           ]
+         }
+       ]
+     }
+   }
+   ```
+
+**Note:** This hook removes `.active.override.$TTY_ID` files created by "switch to" commands. Without it, stale files are harmlessly overwritten by the next session in that terminal.
+
 ## Usage
 
 ### Project Commands
 
-| Say                         | Action                        |
-| --------------------------- | ----------------------------- |
-| "list projects"             | Show all registered projects  |
-| "switch to [name]"          | Change active project         |
-| "which project?"            | Show current project and path |
-| "add project [name]"        | Interactive project creation  |
-| "where are planning files?" | Show resolved planning path   |
+| Say                         | Action                                    |
+| --------------------------- | ----------------------------------------- |
+| "list projects"             | Show all registered projects              |
+| "switch to [name]"          | Change active project (this session only) |
+| "set default [name]"        | Set workspace default for new sessions    |
+| "which project?"            | Show current project and path             |
+| "add project [name]"        | Interactive project creation              |
+| "where are planning files?" | Show resolved planning path               |
 
 ### Adding a Project
 
@@ -158,11 +191,32 @@ Claude: Created project "my-app":
 ```
 You: switch to project-b
 
-Claude: Switched to project-b
+Claude: Switched to project-b (this session)
         Planning: ~/Obsidian/Planning/project-b/
         Source: ~/code/project-b
 
         [Reads task_plan.md and shows current status]
+```
+
+### Session Isolation (v1.4.0)
+
+Multiple Claude Code terminals can work on different projects in the same workspace without conflicts:
+
+- **"switch to X"** writes to a session-local override file (`.active.override.$TTY_ID`)
+- **Other terminals** are unaffected by your project switches
+- **SessionEnd hook** cleans up the override file automatically
+- **"set default X"** updates `index.md` (the workspace default for new sessions)
+
+**Priority cascade when reading active project:**
+
+1. `$MANUS_PROJECT` environment variable (explicit override)
+2. `.active.override.$TTY_ID` (session-local state)
+3. `active:` in `index.md` (workspace default)
+
+**Recommended .gitignore addition:**
+
+```
+.planning/.active.override.*
 ```
 
 ## Backward Compatibility
@@ -189,7 +243,8 @@ multi-manus-planning/
 │   └── scripts/
 │       ├── init-session.sh
 │       ├── check-complete.sh
-│       └── planning-sync.sh     # SessionStart hook
+│       ├── planning-sync.sh     # SessionStart hook
+│       └── planning-cleanup.sh  # SessionEnd hook (v1.4.0)
 ├── CHANGELOG.md
 ├── LICENSE
 └── README.md
